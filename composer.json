@@ -1,5 +1,5 @@
 {
-    "name": "2blane/IronSQL",
+    "name": "Anomalous/IronSQL",
     "description": "PHP database adapter for MySQL Databases. Inspired by MeekroDB.",
     "homepage": "http://www.meekro.com",
     "support": {
