@@ -1,12 +1,11 @@
-MeekroDB -- The Simple PHP MySQL Library
+IronSQL -- PHP database adapter for MySQL Databases. Inspired by MeekroDB.
 ========
 Learn more: http://www.meekro.com
 
-MeekroDB is: 
+IronSQL is:
 
 * A PHP MySQL library that lets you **get more done with fewer lines of code**, and **makes SQL injection 100% impossible**.
-* Google's #1 search result for "php mysql library" for over 2 years, with **thousands of deployments worldwide**.
-* A library with a **perfect security track record**. No bugs relating to security or SQL injection have ever been discovered.
+* There were a few things that [MeekroDB](https://github.com/SergeyTsalkov/meekrodb) didn't contain so I've decided to clone the repository and start my own variation.
 
 Installation
 ========
@@ -16,6 +15,7 @@ When you're ready to get started, see the [Quick Start Guide](http://www.meekro.
 Include the `db.class.php` file into your project and set it up like this:
 
     require_once 'db.class.php';
+    DB::$host = 'my_host_name';
     DB::$user = 'my_database_user';
     DB::$password = 'my_database_password';
     DB::$dbName = 'my_database_name';
@@ -25,7 +25,7 @@ Add this to your `composer.json`
 
     {
       "require": {
-        "sergeytsalkov/meekrodb": "*"
+        "anomalous/iron-sql": "*"
       }
     }
 
@@ -47,7 +47,7 @@ Code Examples
       'age' => $age,
       'intelligence' => $intelligence
     ));
-    
+
 ### Grab one row or field
 
 	$account = DB::queryFirstRow("SELECT * FROM accounts WHERE username=%s", 'Joe');
@@ -63,46 +63,46 @@ Code Examples
     // .. some queries..
     $depth = DB::startTransaction(); // inner transaction
     echo $depth . 'transactions are currently active'; // 2
-     
+
     // .. some queries..
     DB::commit(); // commit inner transaction
     // .. some queries..
     DB::commit(); // commit outer transaction
-    
+
 ### Lots More - See: http://www.meekro.com/docs.php
 
-    
-How is MeekroDB better than PDO?
+
+How is IronSQL better than PDO?
 ========
 ### Optional Static Class Mode
-Most web apps will only ever talk to one database. This means that 
-passing $db objects to every function of your code just adds unnecessary clutter. 
-The simplest approach is to use static methods such as DB::query(), and that's how 
-MeekroDB works. Still, if you need database objects, MeekroDB can do that too.
+Most web apps will only ever talk to one database. This means that
+passing $db objects to every function of your code just adds unnecessary clutter.
+The simplest approach is to use static methods such as DB::query(), and that's how
+IronSQL works. Still, if you need database objects, IronSQL can do that too.
 
 ### Do more with fewer lines of code
-The code below escapes your parameters for safety, runs the query, and grabs 
+The code below escapes your parameters for safety, runs the query, and grabs
 the first row of results. Try doing that in one line with PDO.
 
 	$account = DB::queryFirstRow("SELECT * FROM accounts WHERE username=%s", 'Joe');
 
 ### Work with list parameters easily
-Using MySQL's IN keyword should not be hard. MeekroDB smooths out the syntax for you, 
+Using MySQL's IN keyword should not be hard. IronSQL smooths out the syntax for you,
 PDO does not.
 
 	$accounts = DB::query("SELECT * FROM accounts WHERE username IN %ls", array('Joe', 'Frank'));
 
 
 ### Simple inserts
-Using MySQL's INSERT should not be more complicated than passing in an 
-associative array. MeekroDB also simplifies many related commands, including 
+Using MySQL's INSERT should not be more complicated than passing in an
+associative array. IronSQL also simplifies many related commands, including
 the useful and bizarre INSERT .. ON DUPLICATE UPDATE command. PDO does none of this.
 
 	DB::insert('accounts', array('username' => 'John', 'password' => 'whatever'));
 
 ### Focus on the goal, not the task
-Want to do INSERT yourself rather than relying on DB::insert()? 
-It's dead simple. I don't even want to think about how many lines 
+Want to do INSERT yourself rather than relying on DB::insert()?
+It's dead simple. I don't even want to think about how many lines
 you'd need to pull this off in PDO.
 
     // Insert 2 rows at once
@@ -115,8 +115,8 @@ you'd need to pull this off in PDO.
     );
 
 ### Nested transactions
-MySQL's SAVEPOINT commands lets you create nested transactions, but only 
-if you keep track of SAVEPOINT ids yourself. MeekroDB does this for you, 
+MySQL's SAVEPOINT commands lets you create nested transactions, but only
+if you keep track of SAVEPOINT ids yourself. IronSQL does this for you,
 so you can have nested transactions with no complexity or learning curve.
 
     DB::$nested_transactions = true;
@@ -124,24 +124,16 @@ so you can have nested transactions with no complexity or learning curve.
     // .. some queries..
     $depth = DB::startTransaction(); // inner transaction
     echo $depth . 'transactions are currently active'; // 2
-     
+
     // .. some queries..
     DB::commit(); // commit inner transaction
     // .. some queries..
     DB::commit(); // commit outer transaction
 
 ### Flexible error and success handlers
-Set your own custom function run on errors, or on every query that succeeds. 
-You can easily have separate error handling behavior for the dev and live 
-versions of your application. Want to count up all your queries and their 
+Set your own custom function run on errors, or on every query that succeeds.
+You can easily have separate error handling behavior for the dev and live
+versions of your application. Want to count up all your queries and their
 runtime? Just add a new success handler.
 
-### More about MeekroDB's design philosophy: http://www.meekro.com/beliefs.php
-
-My Other Projects
-========
-A little shameless self-promotion!
-
-  * [ArkServers.io](https://arkservers.io) -- Ark: Survival Evolved server hosting!
-  * [ChunkHost](https://chunkhost.com) -- VPS Hosting starting at $5/month! We accept bitcoin!
-  * [brooce](https://github.com/SergeyTsalkov/brooce) - Language-agnostic job queue written in Go! Write your jobs in any language, schedule them from any language, run them anywhere!
+### More about IronSQL's design philosophy: http://www.meekro.com/beliefs.php
