@@ -1,21 +1,23 @@
 {
-    "name": "SergeyTsalkov/meekrodb",
-    "description": "The Simple PHP/MySQL Library",
+    "name": "2blane/IronSQL",
+    "description": "PHP database adapter for MySQL Databases. Inspired by MeekroDB.",
     "homepage": "http://www.meekro.com",
     "support": {
-        "email": "support@meekro.com"
+        "email": "support@anomalous.io"
     },
     "keywords": [
         "mysql",
         "database",
         "mysqli",
-        "pdo"
+        "pdo",
+        "php",
+        "adapter"
     ],
     "license": "LGPL-3.0",
     "authors": [
         {
-            "name": "Sergey Tsalkov",
-            "email": "stsalkov@gmail.com"
+            "name": "Blane Townsend",
+            "email": "blane@anomalous.io"
         }
     ],
     "require": {
