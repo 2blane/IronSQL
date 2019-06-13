@@ -93,6 +93,7 @@ class DB {
   public static function insert() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'insert'), $args); }
   public static function insertIgnore() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'insertIgnore'), $args); }
   public static function insertUpdate() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'insertUpdate'), $args); }
+  public static function insertIgnoreOrUpdate() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'insertIgnoreOrUpdate'), $args); }
   public static function replace() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'replace'), $args); }
   public static function update() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'update'), $args); }
   public static function delete() { $args = func_get_args(); return call_user_func_array(array(DB::getMDB(), 'delete'), $args); }
@@ -350,16 +351,16 @@ class MeekroDB {
 
     if (isset($options['ignore']) && $options['ignore']) $which = 'INSERT IGNORE';
 
-    if (isset($options['update']) && is_array($options['update']) && $options['update'] && strtolower($which) == 'insert') {
+    if (isset($options['update']) && is_array($options['update']) && $options['update'] && (strtolower($which) == 'insert' || strtolower($which) == 'insert ignore')) {
       if (array_values($options['update']) !== $options['update']) {
         return $this->query(
-          str_replace('%', $this->param_char, "INSERT INTO %b %lb VALUES $var ON DUPLICATE KEY UPDATE %hc"),
-          $table, $keys, $values, $options['update']);
+          str_replace('%', $this->param_char, "%l INTO %b %lb VALUES $var ON DUPLICATE KEY UPDATE %hc"),
+          $which, $table, $keys, $values, $options['update']);
       } else {
         $update_str = array_shift($options['update']);
         $query_param = array(
-          str_replace('%', $this->param_char, "INSERT INTO %b %lb VALUES $var ON DUPLICATE KEY UPDATE ") . $update_str,
-          $table, $keys, $values);
+          str_replace('%', $this->param_char, "%l INTO %b %lb VALUES $var ON DUPLICATE KEY UPDATE ") . $update_str,
+          $which, $table, $keys, $values);
         $query_param = array_merge($query_param, $options['update']);
         return call_user_func_array(array($this, 'query'), $query_param);
       }
@@ -392,6 +393,25 @@ class MeekroDB {
     else $update = $args;
 
     return $this->insertOrReplace('INSERT', $table, $data, array('update' => $update));
+  }
+
+  public function insertIgnoreOrUpdate() {
+    $args = func_get_args();
+    $table = array_shift($args);
+    $data = array_shift($args);
+
+    if (! isset($args[0])) { // update will have all the data of the insert
+      if (isset($data[0]) && is_array($data[0])) { //multiple insert rows specified -- failing!
+        return $this->nonSQLError("Badly formatted insertIgnoreOrUpdate() query -- you didn't specify the update component!");
+      }
+
+      $args[0] = $data;
+    }
+
+    if (is_array($args[0])) $update = $args[0];
+    else $update = $args;
+
+    return $this->insertOrReplace('INSERT', $table, $data, array('update' => $update, 'ignore' => true));
   }
 
   public function delete() {
